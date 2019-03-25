@@ -1,0 +1,108 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<main class="my-5 pt-5">
+    <div class="container">
+        <section>
+            <div class="wow fadeIn row">
+                <div class="col-5" style="max-width: 30%;">
+                        <img src="{{ item.image }}" class="img-fluid" alt="Responsive image">
+                </div>
+                <div class="col-7">
+                    <h1>{{ item.name }}</h1>
+                    {% if current_user.is_authenticated and item in current_user.following %}
+                        <form action="{{ url_for('listings.unfollow', item_id=item.id) }}" method="POST">
+                            <button class="btn btn-primary" type='submit'>Unfollow</button>
+                        </form>
+                    {% else %}
+                        <form action="{{ url_for('listings.follow', item_id=item.id) }}" method="POST">
+                            <button class="btn btn-primary" type='submit'>Follow</button>
+                        </form>
+                    {% endif %}
+                    <h5 class="grey-text mt-3">{{ listings|length }} listings | {{ item.followers|length }} following this item</h5>
+                </div>
+            </div>
+        </section>
+      <!--Grid row-->
+        <div class="row wow fadeIn mt-3">
+            <div class="col-10">
+                {% for listing in listings %}
+                <div class="card flex-row flex-wrap mb-2">
+                    <div class="card-header border-0" style="max-width: 20%;">
+                        <img src="{{ listing.image }}" class="img-fluid" alt="Responsive image">
+                    </div>
+                    <div class="card-block px-2 pt-2">
+                        <h3 class="font-weight-bold dark-grey-text"><strong>{{ listing.name }}</strong></h3>
+                        <h4 class="grey-text">{{ listing.description }}</h4>
+                        <p>${{ listing.price }} - {{ listing.owner.username }}</p>
+                        {% if current_user.is_authenticated and listing.owner == current_user %}
+                            <form action="{{ url_for('listings.remove_listing', listing_id=listing.id) }}" method="POST" class="mb-2">
+                                <button class="btn btn-small btn-outline-secondary" type="submit">Remove listing</button>
+                            </form>
+                        {% endif %}                  
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="col-2">
+                {% if current_user.is_authenticated %}
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerListing">
+                    Register Listing
+                </button>
+                {% endif %}
+            </div>
+            
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="registerListing" tabindex="-1" role="dialog" aria-labelledby="addItem" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" novalidate>
+                        {{ form.hidden_tag() }}
+                        <p>
+                            {{ form.name.label }}<br>
+                            {{ form.name(size=32) }}<br>
+                            {% for error in form.name.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </p>
+                        <p>
+                            {{ form.description.label }}<br>
+                            {{ form.description(size=32) }}<br>
+                            {% for error in form.description.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </p>
+                        <p>
+                            {{ form.image.label }}<br>
+                            {{ form.image(size=32) }}<br>
+                            {% for error in form.image.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </p>
+                        <p>
+                            {{ form.price.label }}<br>
+                            {{ form.price(size=32) }}<br>
+                            {% for error in form.price.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </p>
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Register Listing</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

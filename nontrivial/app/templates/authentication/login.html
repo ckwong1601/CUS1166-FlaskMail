@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<main class="my-5 pt-5">
+    <div class="container">
+        <section>
+            <div class="wow fadeIn card mx-auto mw-50 pb-3">
+                <h2 class="h1 text-center my-3">Login</h2>
+                <form class="mx-auto" action="" method="post" novalidate>
+                    {{ form.hidden_tag() }}
+                    <p>
+                        {{ form.username.label }}<br>
+                        {{ form.username(size=32) }}<br>
+                        {% for error in form.username.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </p>
+                    <p>
+                        {{ form.password.label }}<br>
+                        {{ form.password(size=32) }}<br>
+                        {% for error in form.password.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}                        </p>
+                    <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+                    <button class="btn btn-primary" type="submit">Login</button>
+                    <a class="btn btn-secondary" href="{{ url_for('auth.register') }}">Register</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</main>
+
+{% endblock %}
